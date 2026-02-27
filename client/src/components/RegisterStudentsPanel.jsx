@@ -23,6 +23,7 @@ export default function RegisterStudentsPanel({ isAdmin = true }) {
   const [loading, setLoading] = useState(false);
   const [loadingAdd, setLoadingAdd] = useState(false);
   const [loadingBulk, setLoadingBulk] = useState(false);
+  const [loadingSeed, setLoadingSeed] = useState(false);
   const [selectedDept, setSelectedDept] = useState(null);
   const [lastAddedDept, setLastAddedDept] = useState(null);
   const [cardPreviewStudent, setCardPreviewStudent] = useState(null);
@@ -174,6 +175,25 @@ export default function RegisterStudentsPanel({ isAdmin = true }) {
     });
   };
 
+  const handleSeedDummy = async () => {
+    if (!window.confirm('Add 50 dummy students to each department (350 total)? IDs will be auto-generated.')) return;
+    setLoadingSeed(true);
+    try {
+      const res = await fetch(`${API_BASE}/students/seed-dummy`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Seed failed');
+      addToast({ message: `Created ${data.created} students (${data.perDepartment} per department)`, type: 'success', size: 'small' });
+      await loadStudents();
+    } catch (err) {
+      addToast({ message: err.message || 'Seed failed', type: 'error', size: 'small' });
+    } finally {
+      setLoadingSeed(false);
+    }
+  };
+
   const handleBulkUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -251,6 +271,11 @@ export default function RegisterStudentsPanel({ isAdmin = true }) {
         <button type="button" className="btn-secondary" disabled={loadingBulk} onClick={() => fileInputRef.current?.click()}>
           {loadingBulk ? 'Importing...' : '📤 Bulk Import (CSV / JSON / XLS)'}
         </button>
+        {isAdmin && (
+          <button type="button" className="btn-secondary" disabled={loadingSeed} onClick={handleSeedDummy}>
+            {loadingSeed ? <><LoaderInline /> Seeding...</> : '🌱 Seed 50 Dummy Students per Dept'}
+          </button>
+        )}
         {bulkResult && !bulkResult.error && <span className="bulk-ok">Created: {bulkResult.created}, Skipped: {bulkResult.skipped}</span>}
         {bulkResult?.error && <span className="bulk-err">{bulkResult.error}</span>}
       </div>

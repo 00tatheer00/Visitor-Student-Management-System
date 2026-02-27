@@ -208,6 +208,45 @@ router.post('/bulk', requireAdmin, async (req, res) => {
   }
 });
 
+// Admin: seed 50 dummy students per department (auto ID)
+router.post('/seed-dummy', requireAdmin, async (req, res) => {
+  try {
+    const countPerDept = 50;
+    const departments = Student.schema.path('department').enumValues || [];
+    const created = [];
+    const skipped = [];
+
+    for (const dept of departments) {
+      for (let i = 1; i <= countPerDept; i++) {
+        const studentId = await getNextIhsId(dept);
+        const existing = await Student.findOne({ studentId });
+        if (existing) {
+          skipped.push({ studentId, reason: 'Already exists' });
+          continue;
+        }
+        const name = `Student ${i} - ${dept}`;
+        const student = await Student.create({
+          studentId,
+          name,
+          department: dept,
+          qrCodeValue: studentId
+        });
+        created.push(student);
+      }
+    }
+
+    return res.json({
+      created: created.length,
+      skipped: skipped.length,
+      total: departments.length * countPerDept,
+      perDepartment: countPerDept,
+      departments: departments.length
+    });
+  } catch (err) {
+    return res.status(500).json({ message: err.message || 'Seed failed' });
+  }
+});
+
 // Admin: view student entry logs (with department filter)
 router.get('/logs/all', requireAdmin, async (req, res) => {
   try {
