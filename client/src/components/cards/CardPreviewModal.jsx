@@ -11,9 +11,9 @@ export default function CardPreviewModal({ type, data, onClose, autoPrint = true
   const { theme } = useCardTheme();
 
   const handlePrint = useReactToPrint({
-    content: () => printContainerRef.current,
+    contentRef: printContainerRef,
     documentTitle: 'ID Card',
-    onBeforeGetContent: () => {
+    onBeforePrint: async () => {
       if (playSound && theme.playSoundOnPrint) {
         playPrintSuccessSound();
       }
@@ -27,7 +27,7 @@ export default function CardPreviewModal({ type, data, onClose, autoPrint = true
 
   const onPrintClick = () => {
     playPrintSuccessSound();
-    handlePrint();
+    handlePrint(() => printContainerRef.current);
   };
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export default function CardPreviewModal({ type, data, onClose, autoPrint = true
       playPrintSuccessSound();
     }
     if (autoPrint && theme.autoPrintOnCheckIn) {
-      const timer = setTimeout(() => handlePrint(), 600);
+      const timer = setTimeout(() => handlePrint(() => printContainerRef.current), 600);
       return () => clearTimeout(timer);
     }
   }, [data, autoPrint, playSound, theme.autoPrintOnCheckIn, theme.playSoundOnPrint]);
