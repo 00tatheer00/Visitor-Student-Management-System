@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { ClipboardList } from 'lucide-react';
 import { SkeletonTable } from './Skeleton.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import { API_BASE } from '../config.js';
@@ -56,7 +57,7 @@ export default function FinesHistoryPanel() {
   return (
     <div className="admin-section">
       <div className="panel-header">
-        <div className="panel-icon">📋</div>
+        <div className="panel-icon"><ClipboardList size={20} strokeWidth={2} /></div>
         <h3>Fines History</h3>
       </div>
 

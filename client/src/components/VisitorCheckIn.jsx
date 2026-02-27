@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Check } from 'lucide-react';
 import { LoaderInline } from './Loader.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import CardPreviewModal from './cards/CardPreviewModal.jsx';
@@ -67,7 +68,7 @@ const VisitorCheckIn = () => {
         message: `${form.name} — Token ${data.tokenNumber || ''}`,
         type: 'success',
         size: 'big',
-        title: '✓ Visitor Added'
+        title: 'Visitor Added'
       });
       setForm({ name: '', cnic: '', phone: '', purpose: '', purposeCustom: '', personToMeet: '', personToMeetCustom: '', visitorType: 'Guest' });
     } catch (err) {
@@ -218,7 +219,7 @@ const VisitorCheckIn = () => {
       </div>
 
       <button type="submit" className="btn-primary-wide btn-checkin" disabled={submitting}>
-        {submitting ? <><LoaderInline /> Checking In...</> : '✓ Check In Visitor'}
+        {submitting ? <><LoaderInline /> Checking In...</> : <><Check size={16} strokeWidth={2} style={{ marginRight: 6, verticalAlign: 'middle' }} /> Check In Visitor</>}
       </button>
 
       {status && (

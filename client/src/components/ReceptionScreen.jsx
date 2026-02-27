@@ -1,4 +1,5 @@
 import React from 'react';
+import { ScanLine, UserPlus, ClipboardList } from 'lucide-react';
 import VisitorCheckIn from './VisitorCheckIn.jsx';
 import ActiveVisitors from './ActiveVisitors.jsx';
 import StudentScanner from './StudentScanner.jsx';
@@ -17,7 +18,7 @@ const ReceptionScreen = () => {
       <div className="reception-layout">
       <section className="panel panel-scanner">
         <div className="panel-header">
-          <div className="panel-icon">🎫</div>
+          <div className="panel-icon"><ScanLine size={20} strokeWidth={2} /></div>
           <h3>Student Entry (Scanner)</h3>
         </div>
         <StudentScanner />
@@ -25,7 +26,7 @@ const ReceptionScreen = () => {
 
       <section className="panel panel-form">
         <div className="panel-header">
-          <div className="panel-icon">👤</div>
+          <div className="panel-icon"><UserPlus size={20} strokeWidth={2} /></div>
           <h3>Visitor Check-In</h3>
         </div>
         <VisitorCheckIn />
@@ -33,7 +34,7 @@ const ReceptionScreen = () => {
 
       <section className="panel panel-active">
         <div className="panel-header">
-          <div className="panel-icon">📋</div>
+          <div className="panel-icon"><ClipboardList size={20} strokeWidth={2} /></div>
           <h3>Active Visitors (Check-Out)</h3>
         </div>
         <ActiveVisitors />

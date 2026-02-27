@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Users, ClipboardList, ScanLine, AlertTriangle } from 'lucide-react';
 import { API_BASE } from '../config.js';
 
 const DashboardMetrics = () => {
@@ -41,34 +42,16 @@ const DashboardMetrics = () => {
   }
 
   const cards = [
-    {
-      title: 'Active Visitors',
-      value: stats.activeVisitors,
-      subtitle: 'Currently in building',
-      gradient: 'pink',
-      icon: '👥'
-    },
-    {
-      title: "Today's Visitors",
-      value: stats.visitorCount,
-      subtitle: 'Checked in today',
-      gradient: 'blue',
-      icon: '📋'
-    },
-    {
-      title: 'Student Entries',
-      value: stats.studentEntryCount,
-      subtitle: 'QR scans today',
-      gradient: 'teal',
-      icon: '🎫'
-    }
+    { title: 'Active Visitors', value: stats.activeVisitors, subtitle: 'Currently in building', gradient: 'pink', Icon: Users },
+    { title: "Today's Visitors", value: stats.visitorCount, subtitle: 'Checked in today', gradient: 'blue', Icon: ClipboardList },
+    { title: 'Student Entries', value: stats.studentEntryCount, subtitle: 'QR scans today', gradient: 'teal', Icon: ScanLine }
   ];
 
   return (
     <>
       {apiError && (
         <div className="api-status-banner" role="alert">
-          <span className="api-status-icon">⚠</span>
+          <AlertTriangle className="api-status-icon" size={20} strokeWidth={2} />
           <span>Unable to connect to server. Please ensure the backend is running (<code>cd backend && npm start</code>).</span>
         </div>
       )}
@@ -80,7 +63,7 @@ const DashboardMetrics = () => {
           style={{ animationDelay: `${i * 0.1}s` }}
         >
           <div className="metric-pattern" />
-          <div className="metric-icon">{card.icon}</div>
+          <div className="metric-icon">{React.createElement(card.Icon, { size: 24, strokeWidth: 2 })}</div>
           <div className="metric-content">
             <span className="metric-title">{card.title}</span>
             <span className="metric-value">{card.value}</span>

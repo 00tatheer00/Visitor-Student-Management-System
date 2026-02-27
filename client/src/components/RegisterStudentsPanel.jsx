@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { ScanLine, Heart, FlaskConical, AlertCircle, Stethoscope, Cross, Eye, Users, Upload, Sprout, FolderOpen } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { LoaderInline } from './Loader.jsx';
 import { useToast } from '../context/ToastContext.jsx';
@@ -6,13 +7,13 @@ import CardPreviewModal from './cards/CardPreviewModal.jsx';
 import { API_BASE } from '../config.js';
 
 const DEPT_CONFIG = {
-  Radiology: { icon: '🩻', color: '#0ea5e9', gradient: 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)' },
-  Cardiology: { icon: '❤️', color: '#ef4444', gradient: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)' },
-  MLT: { icon: '🔬', color: '#8b5cf6', gradient: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)' },
-  Emergency: { icon: '🚑', color: '#f59e0b', gradient: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)' },
-  Dental: { icon: '🦷', color: '#06b6d4', gradient: 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)' },
-  Surgical: { icon: '⚕️', color: '#10b981', gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' },
-  Optometry: { icon: '👁️', color: '#6366f1', gradient: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)' }
+  Radiology: { Icon: ScanLine, color: '#0ea5e9', gradient: 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)' },
+  Cardiology: { Icon: Heart, color: '#ef4444', gradient: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)' },
+  MLT: { Icon: FlaskConical, color: '#8b5cf6', gradient: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)' },
+  Emergency: { Icon: AlertCircle, color: '#f59e0b', gradient: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)' },
+  Dental: { Icon: Stethoscope, color: '#06b6d4', gradient: 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)' },
+  Surgical: { Icon: Cross, color: '#10b981', gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' },
+  Optometry: { Icon: Eye, color: '#6366f1', gradient: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)' }
 };
 
 export default function RegisterStudentsPanel({ isAdmin = true }) {
@@ -225,7 +226,7 @@ export default function RegisterStudentsPanel({ isAdmin = true }) {
   return (
     <div className="admin-section register-students-panel">
       <div className="panel-header">
-        <div className="panel-icon">👥</div>
+        <div className="panel-icon"><Users size={20} strokeWidth={2} /></div>
         <h3>Register Students</h3>
       </div>
       <p className="section-hint">
@@ -269,11 +270,11 @@ export default function RegisterStudentsPanel({ isAdmin = true }) {
       <div className="bulk-row">
         <input ref={fileInputRef} type="file" accept=".csv,.json,.xls,.xlsx" onChange={handleBulkUpload} style={{ display: 'none' }} />
         <button type="button" className="btn-secondary" disabled={loadingBulk} onClick={() => fileInputRef.current?.click()}>
-          {loadingBulk ? 'Importing...' : '📤 Bulk Import (CSV / JSON / XLS)'}
+          {loadingBulk ? 'Importing...' : <><Upload size={16} strokeWidth={2} style={{ marginRight: 6, verticalAlign: 'middle' }} /> Bulk Import (CSV / JSON / XLS)</>}
         </button>
         {isAdmin && (
           <button type="button" className="btn-secondary" disabled={loadingSeed} onClick={handleSeedDummy}>
-            {loadingSeed ? <><LoaderInline /> Seeding...</> : '🌱 Seed 50 Dummy Students per Dept'}
+            {loadingSeed ? <><LoaderInline /> Seeding...</> : <><Sprout size={16} strokeWidth={2} style={{ marginRight: 6, verticalAlign: 'middle' }} /> Seed 50 Dummy Students per Dept</>}
           </button>
         )}
         {bulkResult && !bulkResult.error && <span className="bulk-ok">Created: {bulkResult.created}, Skipped: {bulkResult.skipped}</span>}
@@ -287,7 +288,11 @@ export default function RegisterStudentsPanel({ isAdmin = true }) {
               ← Back to Departments
             </button>
             <h3 className="dept-table-title">
-              {DEPT_CONFIG[selectedDept]?.icon && <span className="dept-title-icon">{DEPT_CONFIG[selectedDept].icon}</span>}
+              {DEPT_CONFIG[selectedDept]?.Icon && (
+                <span className="dept-title-icon">
+                  {React.createElement(DEPT_CONFIG[selectedDept].Icon, { size: 20, strokeWidth: 2 })}
+                </span>
+              )}
               {selectedDept} — Students
             </h3>
           </div>
@@ -335,7 +340,7 @@ export default function RegisterStudentsPanel({ isAdmin = true }) {
               {[1,2,3,4,5,6,7].map((i) => (
                 <div key={i} className="dept-card skeleton-card" style={{ pointerEvents: 'none' }}>
                   <div className="dept-card-header" style={{ background: '#94a3b8' }}>
-                    <span className="dept-icon">📁</span>
+                    <span className="dept-icon"><FolderOpen size={20} strokeWidth={2} /></span>
                     <div className="dept-info">
                       <div className="skeleton" style={{ width: '80%', height: '1rem', borderRadius: 6 }} />
                       <div className="skeleton" style={{ width: '50%', height: '0.8rem', marginTop: '0.5rem', borderRadius: 6 }} />
@@ -347,7 +352,7 @@ export default function RegisterStudentsPanel({ isAdmin = true }) {
           ) : (
             <div className="dept-cards-grid">
               {departments.map((dept) => {
-                const cfg = DEPT_CONFIG[dept] || { icon: '📁', gradient: 'linear-gradient(135deg, #64748b 0%, #475569 100%)' };
+                const cfg = DEPT_CONFIG[dept] || { Icon: FolderOpen, gradient: 'linear-gradient(135deg, #64748b 0%, #475569 100%)' };
                 const list = studentsByDept[dept] || [];
                 const isJustAdded = lastAddedDept === dept;
                 return (
@@ -358,7 +363,7 @@ export default function RegisterStudentsPanel({ isAdmin = true }) {
                     onClick={() => setSelectedDept(dept)}
                   >
                     <div className="dept-card-header">
-                      <span className="dept-icon">{cfg.icon}</span>
+                      <span className="dept-icon">{cfg.Icon ? <cfg.Icon size={20} strokeWidth={2} /> : null}</span>
                       <div className="dept-info">
                         <span className="dept-name">{dept}</span>
                         <span className="dept-count">{list.length} student{list.length !== 1 ? 's' : ''}</span>

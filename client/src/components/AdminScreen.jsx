@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { Lock, BarChart3, BookOpen, TrendingUp } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import CardPreviewModal from './cards/CardPreviewModal.jsx';
 import AddFinePanel from './AddFinePanel.jsx';
@@ -417,7 +418,7 @@ const AdminScreen = ({ activeTab }) => {
     return (
       <div className="admin-login panel">
         <div className="panel-header">
-          <div className="panel-icon">🔐</div>
+          <div className="panel-icon"><Lock size={20} strokeWidth={2} /></div>
           <h3>Admin Login</h3>
         </div>
         <form className="form-large" onSubmit={login}>
@@ -485,7 +486,7 @@ const AdminScreen = ({ activeTab }) => {
       {tab === 'visitors' && (
         <div className="admin-section">
           <div className="panel-header">
-            <div className="panel-icon">📊</div>
+            <div className="panel-icon"><BarChart3 size={20} strokeWidth={2} /></div>
             <h3>Visitor Logs</h3>
           </div>
           <div className="filters-row">
@@ -578,7 +579,7 @@ const AdminScreen = ({ activeTab }) => {
       {tab === 'studentLogs' && (
         <div className="admin-section">
           <div className="panel-header">
-            <div className="panel-icon">📚</div>
+            <div className="panel-icon"><BookOpen size={20} strokeWidth={2} /></div>
             <h3>Student Entry Logs</h3>
           </div>
           <div className="filters-row" style={{ marginBottom: '1rem' }}>
@@ -658,7 +659,7 @@ const AdminScreen = ({ activeTab }) => {
       {tab === 'report' && (
         <div className="admin-section">
           <div className="panel-header">
-            <div className="panel-icon">📈</div>
+            <div className="panel-icon"><TrendingUp size={20} strokeWidth={2} /></div>
             <h3>Today's Summary</h3>
           </div>
           {loadingReport ? (

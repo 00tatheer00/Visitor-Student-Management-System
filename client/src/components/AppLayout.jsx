@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BarChart3, Users, BookOpen, TrendingUp, DollarSign, ClipboardList, Building2, Home, Menu, Sun, Moon } from 'lucide-react';
 import { ToastProvider } from '../context/ToastContext.jsx';
 import { CardThemeProvider } from '../context/CardThemeContext.jsx';
 import { AuthProvider, useAuth } from '../context/AuthContext.jsx';
@@ -6,12 +7,12 @@ import ReceptionScreen from './ReceptionScreen.jsx';
 import AdminScreen from './AdminScreen.jsx';
 
 const ADMIN_TABS = [
-  { id: 'visitors', label: 'Visitor Logs', icon: '📊' },
-  { id: 'students', label: 'Register Students', icon: '👥' },
-  { id: 'studentLogs', label: 'Student Entry Logs', icon: '📚' },
-  { id: 'report', label: 'Daily Report', icon: '📈' },
-  { id: 'addFine', label: 'Add Fine', icon: '💰' },
-  { id: 'finesHistory', label: 'Fines History', icon: '📋' }
+  { id: 'visitors', label: 'Visitor Logs', Icon: BarChart3 },
+  { id: 'students', label: 'Register Students', Icon: Users },
+  { id: 'studentLogs', label: 'Student Entry Logs', Icon: BookOpen },
+  { id: 'report', label: 'Daily Report', Icon: TrendingUp },
+  { id: 'addFine', label: 'Add Fine', Icon: DollarSign },
+  { id: 'finesHistory', label: 'Fines History', Icon: ClipboardList }
 ];
 
 const AppLayoutInner = () => {
@@ -29,7 +30,7 @@ const AppLayoutInner = () => {
     <div className={`app-layout ${darkMode ? 'dark' : ''}`}>
       <aside className={`sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
         <div className="sidebar-brand">
-          <span className="brand-icon">🏥</span>
+          <Building2 className="brand-icon" size={28} strokeWidth={2} />
           {!sidebarCollapsed && <span className="brand-text">IHS Visitor Management</span>}
         </div>
 
@@ -49,7 +50,7 @@ const AppLayoutInner = () => {
             className={`nav-item ${activeTab === 'reception' ? 'active' : ''}`}
             onClick={() => setActiveTab('reception')}
           >
-            <span className="nav-icon">🏠</span>
+            <Home className="nav-icon" size={20} strokeWidth={2} />
             {!sidebarCollapsed && <span>Reception</span>}
           </button>
           {ADMIN_TABS.filter((t) => t.id !== 'addFine' || isAdmin).map((tab) => (
@@ -58,7 +59,7 @@ const AppLayoutInner = () => {
               className={`nav-item ${activeTab === tab.id ? 'active' : ''}`}
               onClick={() => setActiveTab(tab.id)}
             >
-              <span className="nav-icon">{tab.icon}</span>
+              <tab.Icon className="nav-icon" size={20} strokeWidth={2} />
               {!sidebarCollapsed && <span>{tab.label}</span>}
             </button>
           ))}
@@ -72,7 +73,7 @@ const AppLayoutInner = () => {
             onClick={() => setSidebarCollapsed((c) => !c)}
             aria-label="Toggle sidebar"
           >
-            ☰
+            <Menu size={20} strokeWidth={2} />
           </button>
           <div className="top-bar-title">
             <h1>Institute of Health Sciences</h1>
@@ -84,7 +85,7 @@ const AppLayoutInner = () => {
               onClick={() => setDarkMode((d) => !d)}
               title={darkMode ? 'Light mode' : 'Dark mode'}
             >
-              {darkMode ? '☀' : '🌙'}
+              {darkMode ? <Sun size={18} strokeWidth={2} /> : <Moon size={18} strokeWidth={2} />}
             </button>
           </div>
         </header>

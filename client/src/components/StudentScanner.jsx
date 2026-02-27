@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { ScanLine } from 'lucide-react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { Loader } from './Loader.jsx';
 import { useToast } from '../context/ToastContext.jsx';
@@ -46,7 +47,7 @@ const StudentScanner = () => {
           setLastScan({ student: data.student, time: data.existingLog?.entryTime ? new Date(data.existingLog.entryTime) : new Date(), duplicate: true });
           setScanResult('duplicate');
           setStatus({ type: 'error', message: 'Already scanned today' });
-          addToast({ message: `${data.student.name} – Already scanned today`, type: 'error', size: 'big', title: '❌ Duplicate Scan' });
+          addToast({ message: `${data.student.name} – Already scanned today`, type: 'error', size: 'big', title: 'Duplicate Scan' });
         } else {
           throw new Error(data.message || 'Scan failed');
         }
@@ -59,7 +60,7 @@ const StudentScanner = () => {
           message: `${data.student.name} – Entry recorded`,
           type: 'success',
           size: 'big',
-          title: '✓ Entry Recorded'
+          title: 'Entry Recorded'
         });
       }
       lastScannedRef.current = code;
@@ -234,7 +235,7 @@ const StudentScanner = () => {
             </>
           ) : (
             <>
-              <span className="scan-icon">📷</span>
+              <ScanLine className="scan-icon" size={20} strokeWidth={2} />
               <span>Scan QR Code</span>
             </>
           )}
@@ -261,7 +262,7 @@ const StudentScanner = () => {
             className="btn-secondary"
             onClick={startCamera}
           >
-            📷 Use Laptop Camera
+            <><ScanLine size={16} strokeWidth={2} style={{ marginRight: 6, verticalAlign: 'middle' }} /> Use Laptop Camera</>
           </button>
         ) : (
           <div className="camera-view">
@@ -293,8 +294,8 @@ const StudentScanner = () => {
 
       {status && (
         <div className={`status ${status.type === 'success' ? 'success' : 'error'} ${scanResult === 'duplicate' ? 'status-duplicate' : ''}`}>
-          {scanResult === 'success' && '✔ Entry Recorded'}
-          {scanResult === 'duplicate' && '❌ Already Scanned'}
+          {scanResult === 'success' && 'Entry Recorded'}
+          {scanResult === 'duplicate' && 'Already Scanned'}
           {scanResult === 'error' && status.message}
           {scanResult === 'success' && status.message}
           {scanResult === 'duplicate' && ' — ' + status.message}
@@ -303,7 +304,7 @@ const StudentScanner = () => {
 
       {lastScan && (
         <div className={`scan-result ${lastScan.duplicate ? 'scan-result-duplicate' : 'scan-result-success'}`}>
-          <h4>{lastScan.duplicate ? '❌ Already Scanned' : '✔ Entry Recorded'}</h4>
+          <h4>{lastScan.duplicate ? 'Already Scanned' : 'Entry Recorded'}</h4>
           <p><strong>ID:</strong> {lastScan.student.studentId}</p>
           <p><strong>Name:</strong> {lastScan.student.name}</p>
           <p><strong>Department:</strong> {lastScan.student.department}</p>

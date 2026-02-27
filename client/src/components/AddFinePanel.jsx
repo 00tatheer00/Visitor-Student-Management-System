@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { DollarSign, Check } from 'lucide-react';
 import { LoaderInline } from './Loader.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import { API_BASE } from '../config.js';
@@ -120,7 +121,7 @@ export default function AddFinePanel() {
   return (
     <div className="admin-section">
       <div className="panel-header">
-        <div className="panel-icon">💰</div>
+        <div className="panel-icon"><DollarSign size={20} strokeWidth={2} /></div>
         <h3>Add Fine (Manual Entry)</h3>
       </div>
       <p className="section-hint">Search student by ID or name, then add a fine.</p>
@@ -146,7 +147,7 @@ export default function AddFinePanel() {
         {searchResults.length > 0 && (
           <div style={{ marginTop: '0.75rem' }}>
             <p className="section-hint" style={{ marginBottom: '0.5rem', fontSize: '0.85rem' }}>
-              {selectedStudent ? '✓ Student selected' : 'Click a student below to select'}
+              {selectedStudent ? <><Check size={14} strokeWidth={2} style={{ marginRight: 4, verticalAlign: 'middle' }} /> Student selected</> : 'Click a student below to select'}
             </p>
             <div className="search-results" style={{ maxHeight: '180px', overflowY: 'auto', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
             {searchResults.map((s) => (

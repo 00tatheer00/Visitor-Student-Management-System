@@ -60,8 +60,10 @@ body.dark-mode .nav-item.active {
 }
 
 .brand-icon {
-  font-size: 1.75rem;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .brand-text {
@@ -137,8 +139,10 @@ body.dark-mode .nav-item.active {
 }
 
 .nav-icon {
-  font-size: 1.2rem;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Main wrapper */
@@ -326,9 +330,11 @@ body.dark-mode .page-subtitle { color: #94a3b8; }
 }
 
 .metric-icon {
-  font-size: 1.75rem;
   margin-bottom: 0.5rem;
   opacity: 0.95;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .metric-title {
@@ -418,7 +424,10 @@ body.dark-mode .visitor-type-badge {
 }
 
 .api-status-icon {
-  font-size: 1.1rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 body.dark-mode .api-status-banner {
@@ -1699,7 +1708,9 @@ body.dark-mode .scan-ready-badge {
 }
 
 .btn-scan-qr .scan-icon {
-  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .scan-instruction {
@@ -2086,8 +2097,10 @@ body.dark-mode .dept-card:hover {
 }
 
 .dept-icon {
-  font-size: 2rem;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
 }
 
@@ -2170,7 +2183,10 @@ body.dark-mode .btn-back:hover {
 }
 
 .dept-title-icon {
-  font-size: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.35rem;
 }
 
 body.dark-mode .dept-table-title {

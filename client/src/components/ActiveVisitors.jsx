@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Check, LogOut } from 'lucide-react';
 import { SkeletonTable } from './Skeleton.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import { API_BASE } from '../config.js';
@@ -59,7 +60,7 @@ const ActiveVisitors = () => {
         <SkeletonTable rows={4} cols={6} />
       ) : visitors.length === 0 ? (
         <div className="empty-state">
-          <span className="empty-icon">✓</span>
+          <span className="empty-icon"><Check size={32} strokeWidth={2} /></span>
           <p>No active visitors at the moment.</p>
           <span className="empty-hint">Checked-out visitors will disappear from this list.</span>
         </div>
@@ -90,7 +91,7 @@ const ActiveVisitors = () => {
                   <td>{new Date(v.checkInTime).toLocaleTimeString()}</td>
                   <td className="cell-action">
                     <button className="btn-checkout" onClick={() => checkOut(v._id)}>
-                      ✓ Check Out
+                      <LogOut size={14} strokeWidth={2} style={{ marginRight: 4, verticalAlign: 'middle' }} /> Check Out
                     </button>
                   </td>
                 </tr>

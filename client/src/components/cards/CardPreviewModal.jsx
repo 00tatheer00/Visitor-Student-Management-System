@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { Printer } from 'lucide-react';
 import { useReactToPrint } from 'react-to-print';
 import PremiumVisitorCard from './PremiumVisitorCard.jsx';
 import PremiumStudentCard from './PremiumStudentCard.jsx';
@@ -70,7 +71,7 @@ export default function CardPreviewModal({ type, data, onClose, autoPrint = true
         <div className="card-preview-actions no-print">
           <button type="button" className="btn-secondary" onClick={onClose}>Close</button>
           <button type="button" className="btn-primary-wide" onClick={onPrintClick}>
-            🖨️ Print Card
+            <><Printer size={16} strokeWidth={2} style={{ marginRight: 6, verticalAlign: 'middle' }} /> Print Card</>
           </button>
         </div>
       </div>

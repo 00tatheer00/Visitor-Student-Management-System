@@ -1,4 +1,5 @@
 import React from 'react';
+import { Check, X } from 'lucide-react';
 
 const ToastContainer = ({ toasts }) => {
   return (
@@ -10,7 +11,7 @@ const ToastContainer = ({ toasts }) => {
           role="alert"
         >
           <span className="toast-icon">
-            {t.type === 'success' ? '✓' : '✕'}
+            {t.type === 'success' ? <Check size={18} strokeWidth={2.5} /> : <X size={18} strokeWidth={2.5} />}
           </span>
           <div className="toast-content">
             {t.title && <span className="toast-title">{t.title}</span>}
