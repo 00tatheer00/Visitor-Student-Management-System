@@ -5,38 +5,33 @@ import { useCardTheme } from '../../context/CardThemeContext.jsx';
 export default function CardBack({ data, type = 'visitor' }) {
   const { theme } = useCardTheme();
   const qrValue = data?.qrCodeValue || data?.studentId || data?.passId || 'IHS';
-  const instituteAddress = theme?.instituteAddress || 'University of Peshawar';
-
-  const idLabel = type === 'visitor' ? 'Pass ID' : 'Student ID';
-  const idValue = type === 'visitor' ? (data?.passId || '—') : (data?.studentId || '—');
+  const instituteName = theme?.instituteName || 'Institute of Health Sciences';
 
   return (
-    <div className="card-premium card-premium-back print-card">
-      <div className="card-premium-bg" />
-      <div className="card-premium-stars" />
+    <div className="card-school card-school-back print-card">
+      <div className="card-school-wavy" />
+      <div className="card-school-accent-tl" />
 
-      <div className="card-premium-content">
-        <div className="card-premium-header">
-          <div className="card-premium-logo">
-            <span className="card-premium-logo-icon">🔐</span>
-          </div>
-          <div className="card-premium-header-text">
-            <div className="card-premium-institute">{theme?.instituteName || 'Institute of Health Sciences'}</div>
-            <div className="card-premium-type">{type === 'visitor' ? 'Visitor Pass' : 'Student Entry Card'}</div>
-          </div>
-        </div>
-
-        <div className="card-back-body">
-          <div className="card-back-qr-wrap">
-            <QRCodeSVG value={qrValue} size={100} level="M" />
-          </div>
-          <div className="card-back-info">
-            <div className="card-back-name">{data?.name}</div>
-            <div className="card-back-id">{idLabel}: {idValue}</div>
-            <div className="card-back-address">{instituteAddress}</div>
-          </div>
-        </div>
+      <div className="card-school-back-qr">
+        <QRCodeSVG
+          value={qrValue}
+          size={100}
+          level="M"
+          bgColor="#FFFFFF"
+          fgColor="#000000"
+        />
       </div>
+
+      <div className="card-school-back-institute">{instituteName.toUpperCase()}</div>
+
+      <div className="card-school-back-terms">
+        <div className="card-school-back-terms-title">Term & Conditions</div>
+        <p className="card-school-back-terms-text">
+          This card must be presented for entry, library access and events. If lost, report immediately to the administration office.
+        </p>
+      </div>
+
+      <div className="card-school-wave-bottom" />
     </div>
   );
 }

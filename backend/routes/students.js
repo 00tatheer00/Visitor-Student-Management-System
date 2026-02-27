@@ -138,6 +138,12 @@ router.put('/:id', requireAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const updates = req.body || {};
+    // Ensure qrCodeValue = studentId when not explicitly provided (keeps QR scannable)
+    if (updates.qrCodeValue === undefined) {
+      const existing = await Student.findById(id).select('studentId').lean();
+      const sid = updates.studentId ?? existing?.studentId;
+      if (sid) updates.qrCodeValue = sid;
+    }
     const student = await Student.findByIdAndUpdate(id, updates, { new: true });
     if (!student) {
       return res.status(404).json({ message: 'Student not found' });
