@@ -348,98 +348,45 @@
   justify-content: flex-end;
 }
 
-/* Print styles - show only cards */
+/* Print container - used by react-to-print */
+.print-container {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+.print-container .premium-card-inner::before {
+  display: none !important;
+}
+
+/* Print styles - react-to-print uses iframe, these apply inside it */
 @media print {
-  /* Hide main app, show only card print root */
-  body > *:not(#card-print-root) {
-    display: none !important;
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
-  html, body {
+  body {
     margin: 0 !important;
     padding: 0 !important;
     background: #fff !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
   }
 
-  #card-print-root {
+  .print-container {
     display: flex !important;
-    position: static !important;
-    inset: auto !important;
-    width: 100% !important;
-    min-height: 100vh !important;
-    padding: 0.5in !important;
-    background: #fff !important;
-    align-items: center !important;
-    justify-content: center !important;
-    box-sizing: border-box !important;
-  }
-
-  .card-preview-modal-overlay {
-    display: flex !important;
-    position: static !important;
-    width: 100% !important;
-    min-height: 100% !important;
-    padding: 0 !important;
-    background: transparent !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-
-  .card-preview-modal {
-    box-shadow: none !important;
-    max-width: none !important;
-    width: auto !important;
-    background: transparent !important;
-    border: none !important;
-  }
-
-  .no-print,
-  .card-preview-header,
-  .card-preview-actions {
-    display: none !important;
-  }
-
-  .card-preview-content {
-    padding: 0 !important;
-    min-height: auto !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-
-  .premium-card-inner {
+    flex-direction: row !important;
     gap: 24px !important;
-    padding-bottom: 0 !important;
-  }
-
-  .premium-card-inner::before {
-    display: none !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+    flex-wrap: wrap !important;
   }
 
   .card-premium {
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1) !important;
     break-inside: avoid;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-
-  .card-premium-bg,
-  .card-premium-stars,
-  .card-premium-content,
-  .card-premium-header,
-  .card-premium-body,
-  .card-premium-footer,
-  .card-premium-photo,
-  .card-back-qr-wrap,
-  .card-premium * {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-
-  @page {
-    margin: 0.5in;
-    size: auto;
   }
 }
