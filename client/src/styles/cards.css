@@ -1,196 +1,148 @@
-/* Premium ID Card System - Glassmorphism */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+/* IHS ID Card - Minimal design */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-/* Card dimensions: 3.5 x 2 inch (business card) */
 :root {
-  --card-width: 336px;
-  --card-height: 192px;
+  --card-width: 200px;
+  --card-height: 300px;
+  --card-dark: #0d1b2a;
+  --card-dodger: #1e90ff;
+  --card-black: #1a1a1a;
+  --card-white: #ffffff;
+  --card-bg: #e8f2fa;
 }
 
 .premium-card-container {
-  font-family: var(--font, 'Inter', sans-serif);
-  color: var(--text, #1e293b);
+  font-family: 'Inter', sans-serif;
 }
 
 .premium-card-inner {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  flex-direction: row;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
-.card-front,
-.card-back {
+/* ========== MINIMAL CARD ========== */
+.card-minimal {
   width: var(--card-width);
   min-height: var(--card-height);
-  background: var(--gradient, linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%));
-  border-radius: var(--radius, 16px);
-  padding: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  position: relative;
+  background: var(--card-bg);
 }
 
-.card-glass {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(12px);
-  border-radius: calc(var(--radius, 16px) - 4px);
-  padding: 14px;
-  height: 100%;
-  min-height: 160px;
-  border: 1px solid rgba(255, 255, 255, 0.5);
+.card-front-minimal,
+.card-back-minimal {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.card-header {
+/* ========== CARD FRONT ========== */
+.card-minimal-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
+  gap: 10px;
+  margin-bottom: 16px;
 }
 
-.card-logo {
+.card-minimal-logo {
+  font-size: 1.25rem;
   width: 36px;
   height: 36px;
+  background: var(--card-dodger);
+  color: var(--card-white);
   border-radius: 8px;
-  overflow: hidden;
-  background: var(--primary);
-}
-
-.card-logo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.card-logo-placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  height: 100%;
-  font-size: 1.2rem;
 }
 
-.card-institute-name {
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: var(--primary);
-  text-align: right;
-  max-width: 60%;
-}
-
-.card-title {
-  font-size: 0.75rem;
+.card-minimal-institute {
+  font-size: 0.65rem;
   font-weight: 700;
-  color: var(--secondary);
+  color: var(--card-dark);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 10px;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
 }
 
-.card-body {
-  display: flex;
-  gap: 14px;
-  align-items: center;
+.card-minimal-photo-wrap {
+  margin-bottom: 14px;
 }
 
-.card-photo {
-  flex-shrink: 0;
-}
-
-.card-avatar {
-  width: 48px;
-  height: 48px;
+.card-minimal-photo {
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
-  background: var(--gradient);
-  color: #fff;
+  background: var(--card-white);
+  border: 2px solid rgba(30, 144, 255, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.25rem;
-  font-weight: 700;
+  overflow: hidden;
 }
 
-.card-photo img {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
+.card-minimal-avatar {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--card-dark);
+}
+
+.card-minimal-photo img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
 }
 
-.card-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.card-name {
-  font-size: 1rem;
+.card-minimal-name {
+  font-size: 0.95rem;
   font-weight: 700;
-  margin-bottom: 2px;
-}
-
-.card-id,
-.card-dept {
-  font-size: 0.75rem;
-  color: #64748b;
-}
-
-.card-footer {
-  margin-top: 10px;
-  padding-top: 8px;
-  border-top: 1px solid #e2e8f0;
-  font-size: 0.7rem;
-  color: #64748b;
-}
-
-.card-footer-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  color: var(--card-dark);
+  text-align: center;
   margin-bottom: 4px;
 }
 
-.card-qr-small svg {
-  display: block;
+.card-minimal-role {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--card-black);
+  text-align: center;
+  opacity: 0.85;
 }
 
-/* Card Back */
-.card-back .card-glass {
+/* ========== CARD BACK ========== */
+.card-back-content {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
 }
 
-.card-back-qr {
-  margin-bottom: 8px;
-}
-
-.card-back-validity {
-  font-size: 0.8rem;
+.card-back-name {
+  font-size: 0.9rem;
   font-weight: 700;
-  color: var(--primary);
-  margin-bottom: 6px;
+  color: var(--card-dark);
+  margin-bottom: 10px;
 }
 
-.card-back-address,
-.card-back-emergency {
-  font-size: 0.65rem;
-  color: #64748b;
-  margin-bottom: 4px;
-}
-
-.card-back-rules {
+.card-back-contact {
   font-size: 0.6rem;
-  color: #64748b;
-  margin: 8px 0;
-  padding-left: 16px;
-  text-align: left;
+  color: var(--card-black);
+  line-height: 1.6;
+  margin-bottom: 14px;
+  opacity: 0.9;
 }
 
-.card-back-signature {
-  font-size: 0.6rem;
-  border-top: 1px solid #94a3b8;
-  margin-top: auto;
-  padding-top: 8px;
-  color: #94a3b8;
+.card-back-qr {
+  margin-top: 4px;
+}
+.card-back-qr svg {
+  display: block;
 }
 
 /* Card Preview Modal */
@@ -208,7 +160,7 @@
 .card-preview-modal {
   background: #fff;
   border-radius: 16px;
-  max-width: 400px;
+  max-width: 440px;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
@@ -251,7 +203,7 @@
   justify-content: flex-end;
 }
 
-/* Print styles - hide entire page, show only card (modal is portaled to body) */
+/* Print styles */
 @media print {
   body * {
     visibility: hidden !important;
@@ -293,10 +245,7 @@
     gap: 20px;
   }
 
-  /* Ensure gradients and colors print */
-  .card-front,
-  .card-back,
-  .card-glass {
+  .card-minimal {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
@@ -304,59 +253,5 @@
   @page {
     margin: 0.5in;
     size: auto;
-  }
-}
-
-/* Card Theme Admin Panel */
-.card-theme-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  margin-top: 1rem;
-}
-
-.card-theme-form h4 {
-  margin: 1.25rem 0 0.5rem;
-  font-size: 0.95rem;
-  color: #475569;
-}
-
-.card-theme-form h4:first-child {
-  margin-top: 0;
-}
-
-.card-theme-form .form-group {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
-}
-
-.card-theme-form label {
-  min-width: 140px;
-  font-size: 0.9rem;
-}
-
-.card-theme-preview {
-  background: #f8fafc;
-  border-radius: 12px;
-  padding: 1.5rem;
-  border: 1px solid #e2e8f0;
-}
-
-.card-theme-preview h4 {
-  margin: 0 0 1rem;
-  font-size: 0.95rem;
-}
-
-.card-theme-preview-inner {
-  display: flex;
-  justify-content: center;
-  transform-origin: top left;
-}
-
-@media (max-width: 900px) {
-  .card-theme-grid {
-    grid-template-columns: 1fr;
   }
 }

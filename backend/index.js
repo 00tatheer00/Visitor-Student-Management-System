@@ -9,6 +9,7 @@ const studentRoutes = require('./routes/students');
 const reportRoutes = require('./routes/reports');
 const exportRoutes = require('./routes/export');
 const themeRoutes = require('./routes/theme');
+const finesRoutes = require('./routes/fines');
 
 const app = express();
 
@@ -45,10 +46,16 @@ app.use('/api/students', studentRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/export', exportRoutes);
 app.use('/api/theme', themeRoutes);
+app.use('/api/fines', finesRoutes);
 
 // Basic health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', mongo: mongoose.connection.readyState });
+});
+
+// 404 - return JSON so frontend doesn't get HTML
+app.use((req, res) => {
+  res.status(404).json({ message: 'Not found' });
 });
 
 app.listen(PORT, () => {

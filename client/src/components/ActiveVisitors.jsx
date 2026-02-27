@@ -64,10 +64,11 @@ const ActiveVisitors = () => {
           <span className="empty-hint">Checked-out visitors will disappear from this list.</span>
         </div>
       ) : (
-        <div className="table-wrapper active-visitors-table">
-          <table className="table-large">
+        <div className="table-wrapper active-visitors-table active-visitors-scroll">
+          <table className="table-large active-visitors-grid">
             <thead>
               <tr>
+                <th>Token</th>
                 <th>Name</th>
                 <th>Type</th>
                 <th>CNIC</th>
@@ -80,15 +81,16 @@ const ActiveVisitors = () => {
             <tbody>
               {visitors.map((v) => (
                 <tr key={v._id}>
-                  <td>{v.name}</td>
+                  <td><span className="token-badge">{v.tokenNumber || '—'}</span></td>
+                  <td className="cell-name">{v.name}</td>
                   <td><span className="visitor-type-badge">{v.visitorType || 'Guest'}</span></td>
-                  <td>{v.cnic}</td>
-                  <td>{v.phone}</td>
-                  <td>{v.purpose}</td>
+                  <td className="cell-cnic">{v.cnic}</td>
+                  <td className="cell-phone">{v.phone || '—'}</td>
+                  <td className="cell-purpose">{v.purpose}</td>
                   <td>{new Date(v.checkInTime).toLocaleTimeString()}</td>
-                  <td>
-                    <button className="btn-secondary" onClick={() => checkOut(v._id)}>
-                      Check Out
+                  <td className="cell-action">
+                    <button className="btn-checkout" onClick={() => checkOut(v._id)}>
+                      ✓ Check Out
                     </button>
                   </td>
                 </tr>

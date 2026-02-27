@@ -700,7 +700,11 @@ body.dark-mode .panel-icon {
 }
 
 .panel-form { grid-column: 1; }
-.panel-active { grid-column: 2; }
+.panel-active {
+  grid-column: 2;
+  min-width: 0;
+  overflow: visible;
+}
 
 @media (max-width: 768px) {
   .reception-layout {
@@ -1042,6 +1046,55 @@ body.dark-mode .status.info {
   color: #7dd3fc;
 }
 
+.status-duplicate { background: #fef3c7 !important; color: #b45309 !important; }
+body.dark-mode .status-duplicate { background: #78350f !important; color: #fde68a !important; }
+
+.scan-result-success { border-left: 4px solid #22c55e; }
+.scan-result-duplicate { border-left: 4px solid #f59e0b; }
+
+.token-badge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+body.dark-mode .token-badge {
+  background: #1e3a8a;
+  color: #93c5fd;
+}
+
+.dept-badge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  background: #e0e7ff;
+  color: #4338ca;
+}
+
+body.dark-mode .dept-badge {
+  background: #312e81;
+  color: #a5b4fc;
+}
+
+.fine-badge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  background: #fef3c7;
+  color: #b45309;
+}
+
+body.dark-mode .fine-badge {
+  background: #78350f;
+  color: #fde68a;
+}
+
 /* ===== Tables ===== */
 .table-wrapper {
   border-radius: 8px;
@@ -1125,6 +1178,74 @@ body.dark-mode .active-visitors-table .visitor-type-badge {
   padding: 0.4rem 0.85rem;
   font-size: 0.8rem;
   border-radius: 8px;
+}
+
+/* Active Visitors - prevent truncation, show full details */
+.active-visitors .table-wrapper.active-visitors-scroll {
+  overflow-x: auto !important;
+  overflow-y: visible;
+}
+
+.active-visitors-grid {
+  table-layout: auto;
+  min-width: 900px;
+}
+
+.active-visitors-grid .cell-name,
+.active-visitors-grid .cell-purpose {
+  min-width: 100px;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.active-visitors-grid .cell-cnic {
+  min-width: 120px;
+  white-space: nowrap;
+}
+
+.active-visitors-grid .cell-phone {
+  min-width: 120px;
+  white-space: nowrap;
+}
+
+.active-visitors-grid .cell-action {
+  min-width: 120px;
+  white-space: nowrap;
+}
+
+.btn-checkout {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: #fff;
+  box-shadow: 0 2px 4px rgba(34, 197, 94, 0.3);
+  transition: all 0.2s ease;
+}
+
+.btn-checkout:hover {
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(34, 197, 94, 0.4);
+}
+
+.btn-checkout:active {
+  transform: translateY(0);
+}
+
+body.dark-mode .btn-checkout {
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+  color: #fff;
+}
+
+body.dark-mode .btn-checkout:hover {
+  background: linear-gradient(135deg, #15803d 0%, #166534 100%);
 }
 
 .table-large {
@@ -1880,4 +2001,217 @@ body.dark-mode .toast-big.toast-error {
 body.dark-mode .toast-big.toast-error .toast-icon {
   background: #f87171;
   color: #0f172a;
+}
+
+/* ===== Register Students - Department Cards ===== */
+.register-students-panel .dept-form {
+  margin-bottom: 1rem;
+}
+
+.register-students-panel .bulk-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.register-students-panel .bulk-ok { color: #16a34a; font-size: 0.9rem; }
+.register-students-panel .bulk-err { color: #dc2626; font-size: 0.9rem; }
+
+.dept-cards-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 1rem;
+}
+
+body.dark-mode .dept-cards-title {
+  color: #94a3b8;
+}
+
+.dept-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.dept-card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  border: 1px solid #e2e8f0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dept-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+}
+
+.dept-card-clickable .dept-chevron {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+.dept-card.just-added {
+  animation: dept-pulse 1.5s ease;
+}
+
+@keyframes dept-pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+  50% { transform: scale(1.02); box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.3), 0 8px 24px rgba(0,0,0,0.12); }
+}
+
+body.dark-mode .dept-card {
+  background: #1e293b;
+  border-color: #334155;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+body.dark-mode .dept-card:hover {
+  box-shadow: 0 12px 24px rgba(0,0,0,0.4);
+}
+
+.dept-card-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: var(--dept-gradient, linear-gradient(135deg, #64748b 0%, #475569 100%));
+  color: #fff;
+  min-height: 80px;
+}
+
+.dept-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+.dept-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.dept-name {
+  display: block;
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.02em;
+}
+
+.dept-count {
+  display: block;
+  font-size: 0.85rem;
+  opacity: 0.9;
+  margin-top: 0.2rem;
+}
+
+.dept-chevron {
+  font-size: 0.75rem;
+  opacity: 0.9;
+}
+
+/* Department table page - full page view */
+.dept-table-page {
+  margin-top: 1rem;
+  min-height: 400px;
+}
+
+.dept-table-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #64748b;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-back:hover {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+body.dark-mode .btn-back {
+  background: #334155;
+  color: #94a3b8;
+  border-color: #475569;
+}
+
+body.dark-mode .btn-back:hover {
+  background: #475569;
+  color: #f1f5f9;
+}
+
+.dept-table-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dept-title-icon {
+  font-size: 1.5rem;
+}
+
+body.dark-mode .dept-table-title {
+  color: #f1f5f9;
+}
+
+.dept-students-table {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.dept-students-table .table-large th {
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  padding: 0.9rem 1.25rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #475569;
+}
+
+body.dark-mode .dept-students-table .table-large th {
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  color: #94a3b8;
+}
+
+.dept-students-table .table-large td {
+  padding: 0.9rem 1.25rem;
+  vertical-align: middle;
+}
+
+.dept-students-table .table-large tbody tr:hover {
+  background: #f8fafc;
+}
+
+body.dark-mode .dept-students-table .table-large tbody tr:hover {
+  background: #334155;
+}
+
+.dept-students-table .btn-sm {
+  padding: 0.4rem 0.85rem;
+  font-size: 0.8rem;
+  margin-right: 0.5rem;
 }

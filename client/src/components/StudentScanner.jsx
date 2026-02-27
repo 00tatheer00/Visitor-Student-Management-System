@@ -5,14 +5,20 @@ import { useToast } from '../context/ToastContext.jsx';
 import { API_BASE } from '../config.js';
 const SCANNER_ELEMENT_ID = 'qr-barcode-scanner';
 
+const FINE_TYPES = ['No Uniform', 'Late Entry', 'No ID Card', 'Misconduct'];
+
 const StudentScanner = () => {
   const { addToast } = useToast();
   const [lastScan, setLastScan] = useState(null);
+  const [scanResult, setScanResult] = useState(null); // 'success' | 'duplicate' | 'error'
   const [status, setStatus] = useState(null);
   const [cameraActive, setCameraActive] = useState(false);
   const [cameraError, setCameraError] = useState(null);
   const [showCameraPanel, setShowCameraPanel] = useState(false);
   const [lastRawScan, setLastRawScan] = useState('');
+  const [fineCheckbox, setFineCheckbox] = useState(false);
+  const [showQuickFine, setShowQuickFine] = useState(false);
+  const [addingFine, setAddingFine] = useState(false);
   const inputRef = useRef(null);
   const html5QrRef = useRef(null);
   const lastScannedRef = useRef(null);
@@ -29,37 +35,66 @@ const StudentScanner = () => {
   const handleScan = async (code) => {
     if (!code || scanCooldownRef.current) return;
     setStatus(null);
+    setScanResult(null);
+    setShowQuickFine(false);
     setScanning(true);
     try {
       const res = await fetch(`${API_BASE}/students/scan?code=${encodeURIComponent(code)}`);
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.message || 'Scan failed');
+        if (data.duplicate) {
+          setLastScan({ student: data.student, time: data.existingLog?.entryTime ? new Date(data.existingLog.entryTime) : new Date(), duplicate: true });
+          setScanResult('duplicate');
+          setStatus({ type: 'error', message: 'Already scanned today' });
+          addToast({ message: `${data.student.name} – Already scanned today`, type: 'error', size: 'big', title: '❌ Duplicate Scan' });
+        } else {
+          throw new Error(data.message || 'Scan failed');
+        }
+      } else {
+        setLastScan({ student: data.student, time: new Date(data.log.entryTime), duplicate: false });
+        setScanResult('success');
+        setStatus({ type: 'success', message: 'Entry recorded.' });
+        setShowQuickFine(fineCheckbox);
+        addToast({
+          message: `${data.student.name} – Entry recorded`,
+          type: 'success',
+          size: 'big',
+          title: '✓ Entry Recorded'
+        });
       }
-      setLastScan({
-        student: data.student,
-        time: new Date(data.log.entryTime)
-      });
-      setStatus({ type: 'success', message: 'Student entry recorded.' });
-      addToast({
-        message: `${data.student.name} – Entry recorded`,
-        type: 'success',
-        size: 'big',
-        title: '✓ QR Code Scanned'
-      });
       lastScannedRef.current = code;
       scanCooldownRef.current = true;
       setTimeout(() => { scanCooldownRef.current = false; }, 2500);
     } catch (err) {
       setLastScan(null);
+      setScanResult('error');
       setStatus({ type: 'error', message: err.message || 'Student not registered' });
       addToast({ message: err.message || 'Student not registered', type: 'error', size: 'small' });
       scanCooldownRef.current = true;
-      setTimeout(() => {
-        scanCooldownRef.current = false;
-      }, 1500);
+      setTimeout(() => { scanCooldownRef.current = false; }, 1500);
     } finally {
       setScanning(false);
+    }
+  };
+
+  const addQuickFine = async (fineType, amount = 500) => {
+    if (!lastScan?.student) return;
+    setAddingFine(true);
+    try {
+      const res = await fetch(`${API_BASE}/fines/scan`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ studentId: lastScan.student.studentId, fineType, amount, reason: 'Added during scan' })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Failed to add fine');
+      addToast({ message: `Fine of Rs.${amount} added for ${lastScan.student.name}`, type: 'success', size: 'small' });
+      setShowQuickFine(false);
+    } catch (err) {
+      addToast({ message: err.message || 'Failed to add fine', type: 'error', size: 'small' });
+    } finally {
+      setAddingFine(false);
     }
   };
 
@@ -178,6 +213,12 @@ const StudentScanner = () => {
 
   return (
     <div className="student-scanner">
+      <div className="scan-options" style={{ marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', cursor: 'pointer' }}>
+          <input type="checkbox" checked={fineCheckbox} onChange={(e) => setFineCheckbox(e.target.checked)} />
+          <span>Add fine during scan</span>
+        </label>
+      </div>
       <div className="scan-button-section" title="USB scanner input area">
         <span className="scan-ready-badge">Ready</span>
         <button
@@ -251,18 +292,31 @@ const StudentScanner = () => {
       </div>
 
       {status && (
-        <div className={status.type === 'success' ? 'status success' : 'status error'}>
-          {status.message}
+        <div className={`status ${status.type === 'success' ? 'success' : 'error'} ${scanResult === 'duplicate' ? 'status-duplicate' : ''}`}>
+          {scanResult === 'success' && '✔ Entry Recorded'}
+          {scanResult === 'duplicate' && '❌ Already Scanned'}
+          {scanResult === 'error' && status.message}
+          {scanResult === 'success' && status.message}
+          {scanResult === 'duplicate' && ' — ' + status.message}
         </div>
       )}
 
       {lastScan && (
-        <div className="scan-result">
-          <h4>✓ Last Scan</h4>
+        <div className={`scan-result ${lastScan.duplicate ? 'scan-result-duplicate' : 'scan-result-success'}`}>
+          <h4>{lastScan.duplicate ? '❌ Already Scanned' : '✔ Entry Recorded'}</h4>
           <p><strong>ID:</strong> {lastScan.student.studentId}</p>
           <p><strong>Name:</strong> {lastScan.student.name}</p>
           <p><strong>Department:</strong> {lastScan.student.department}</p>
-          <p><strong>Entry Time:</strong> {lastScan.time.toLocaleTimeString()}</p>
+          <p><strong>Time:</strong> {lastScan.time ? lastScan.time.toLocaleTimeString() : '—'}</p>
+          {showQuickFine && !lastScan.duplicate && (
+            <div className="quick-fine-buttons" style={{ marginTop: '0.75rem', display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+              {FINE_TYPES.map((ft) => (
+                <button key={ft} type="button" className="btn-small" onClick={() => addQuickFine(ft)} disabled={addingFine}>
+                  {addingFine ? '...' : `+ ${ft}`}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>

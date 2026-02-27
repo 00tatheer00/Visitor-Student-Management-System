@@ -1,13 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { ToastProvider } from '../context/ToastContext.jsx';
 import { CardThemeProvider } from '../context/CardThemeContext.jsx';
+import { AuthProvider, useAuth } from '../context/AuthContext.jsx';
 import ReceptionScreen from './ReceptionScreen.jsx';
 import AdminScreen from './AdminScreen.jsx';
 
-const AppLayout = () => {
+const ADMIN_TABS = [
+  { id: 'visitors', label: 'Visitor Logs', icon: '📊' },
+  { id: 'students', label: 'Register Students', icon: '👥' },
+  { id: 'studentLogs', label: 'Student Entry Logs', icon: '📚' },
+  { id: 'report', label: 'Daily Report', icon: '📈' },
+  { id: 'addFine', label: 'Add Fine', icon: '💰' },
+  { id: 'finesHistory', label: 'Fines History', icon: '📋' }
+];
+
+const AppLayoutInner = () => {
   const [activeTab, setActiveTab] = useState('reception');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const { user } = useAuth();
+  const isAdmin = user?.role !== 'security';
 
   useEffect(() => {
     document.body.classList.toggle('dark-mode', darkMode);
@@ -40,13 +52,16 @@ const AppLayout = () => {
             <span className="nav-icon">🏠</span>
             {!sidebarCollapsed && <span>Reception</span>}
           </button>
-          <button
-            className={`nav-item ${activeTab === 'admin' ? 'active' : ''}`}
-            onClick={() => setActiveTab('admin')}
-          >
-            <span className="nav-icon">📊</span>
-            {!sidebarCollapsed && <span>Admin Dashboard</span>}
-          </button>
+          {ADMIN_TABS.filter((t) => t.id !== 'addFine' || isAdmin).map((tab) => (
+            <button
+              key={tab.id}
+              className={`nav-item ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              <span className="nav-icon">{tab.icon}</span>
+              {!sidebarCollapsed && <span>{tab.label}</span>}
+            </button>
+          ))}
         </nav>
       </aside>
 
@@ -77,7 +92,11 @@ const AppLayout = () => {
         <main className="main-content">
           <CardThemeProvider>
             <ToastProvider>
-              {activeTab === 'reception' ? <ReceptionScreen /> : <AdminScreen />}
+              {activeTab === 'reception' ? (
+                <ReceptionScreen />
+              ) : (
+                <AdminScreen activeTab={activeTab} />
+              )}
             </ToastProvider>
           </CardThemeProvider>
         </main>
@@ -85,5 +104,11 @@ const AppLayout = () => {
     </div>
   );
 };
+
+const AppLayout = () => (
+  <AuthProvider>
+    <AppLayoutInner />
+  </AuthProvider>
+);
 
 export default AppLayout;

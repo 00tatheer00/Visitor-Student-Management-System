@@ -31,8 +31,12 @@ router.post('/login', async (req, res) => {
     return res.status(401).json({ message: 'Invalid credentials' });
   }
 
-  req.session.adminUser = { id: user._id.toString(), username: user.username };
-  return res.json({ username: user.username });
+  req.session.adminUser = {
+    id: user._id.toString(),
+    username: user.username,
+    role: user.role || 'admin'
+  };
+  return res.json({ username: user.username, role: user.role || 'admin' });
 });
 
 router.post('/logout', (req, res) => {

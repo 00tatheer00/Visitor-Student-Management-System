@@ -7,6 +7,7 @@ const router = express.Router();
 
 // Public: scan student card (USB scanner or camera)
 // Expects query ?code=... which can be studentId or qrCodeValue
+// Double scan prevention: only one entry per student per day
 router.get('/scan', async (req, res) => {
   try {
     const { code } = req.query;
@@ -22,6 +23,26 @@ router.get('/scan', async (req, res) => {
       return res.status(404).json({ message: 'Student not registered' });
     }
 
+    // Double scan prevention: check if already has entry today
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(startOfDay);
+    endOfDay.setDate(endOfDay.getDate() + 1);
+
+    const existingLog = await StudentLog.findOne({
+      student: student._id,
+      entryTime: { $gte: startOfDay, $lt: endOfDay }
+    });
+
+    if (existingLog) {
+      return res.status(400).json({
+        message: 'Already scanned today',
+        duplicate: true,
+        student,
+        existingLog: { entryTime: existingLog.entryTime }
+      });
+    }
+
     const log = await StudentLog.create({ student: student._id });
 
     return res.json({
@@ -31,6 +52,11 @@ router.get('/scan', async (req, res) => {
   } catch (err) {
     return res.status(500).json({ message: 'Failed to process scan' });
   }
+});
+
+// Public: get departments list (for dropdowns)
+router.get('/departments', (req, res) => {
+  return res.json({ departments: Student.schema.path('department').enumValues });
 });
 
 // Admin: manage students
@@ -49,19 +75,20 @@ router.get('/', requireAdmin, async (req, res) => {
   }
 });
 
-// Department code: Institute + Dept abbreviation, e.g. Nursing→NUR, Pharmacy→PHR
+// Department code for fixed departments: Radiology→RAD, Cardiology→CAR, etc.
+const DEPT_CODE_MAP = {
+  Radiology: 'RAD',
+  Cardiology: 'CAR',
+  MLT: 'MLT',
+  Emergency: 'EMR',
+  Dental: 'DNT',
+  Surgical: 'SRG',
+  Optometry: 'OPT'
+};
+
 function getDeptCode(department) {
-  const d = (department || '').trim().toLowerCase();
-  if (d.includes('nursing')) return 'NUR';
-  if (d.includes('pharmacy')) return 'PHR';
-  if (d.includes('medical')) return 'MED';
-  if (d.includes('medicine')) return 'MED';
-  if (d.includes('health')) return 'HLT';
-  if (d.includes('dental')) return 'DNT';
-  if (d.includes('physiotherapy') || d.includes('physio')) return 'PT';
-  if (d.includes('laboratory') || d.includes('lab')) return 'LAB';
-  const clean = d.replace(/\s+/g, '').replace(/[^a-z]/g, '');
-  return (clean.substring(0, 3) || 'GEN').toUpperCase();
+  const d = (department || '').trim();
+  return DEPT_CODE_MAP[d] || (d.substring(0, 3).toUpperCase() || 'GEN');
 }
 
 // Generate next IHS student ID: IHS-{DEPT}-{number}, e.g. IHS-NUR-001, IHS-NUR-002
@@ -181,10 +208,10 @@ router.post('/bulk', requireAdmin, async (req, res) => {
   }
 });
 
-// Admin: view student entry logs
+// Admin: view student entry logs (with department filter)
 router.get('/logs/all', requireAdmin, async (req, res) => {
   try {
-    const { from, to, studentId } = req.query;
+    const { from, to, studentId, department } = req.query;
     const filter = {};
 
     if (from || to) {
@@ -202,9 +229,13 @@ router.get('/logs/all', requireAdmin, async (req, res) => {
       }
     }
 
-    const logs = await StudentLog.find(filter)
+    let logs = await StudentLog.find(filter)
       .populate('student')
       .sort({ entryTime: -1 });
+
+    if (department) {
+      logs = logs.filter((l) => l.student && l.student.department === department);
+    }
 
     return res.json(logs);
   } catch (err) {

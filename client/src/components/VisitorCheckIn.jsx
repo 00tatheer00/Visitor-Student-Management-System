@@ -61,10 +61,10 @@ const VisitorCheckIn = () => {
         throw new Error(data.message || 'Failed to check in visitor');
       }
 
-      setStatus({ type: 'success', message: 'Visitor checked in successfully.' });
+      setStatus({ type: 'success', message: `Visitor checked in. Token: ${data.tokenNumber || '—'}` });
       setLastCheckedIn(data);
       addToast({
-        message: `${form.name} has been checked in`,
+        message: `${form.name} — Token ${data.tokenNumber || ''}`,
         type: 'success',
         size: 'big',
         title: '✓ Visitor Added'

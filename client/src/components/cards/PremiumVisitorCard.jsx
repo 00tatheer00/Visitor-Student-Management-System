@@ -3,9 +3,8 @@ import CardFront from './CardFront.jsx';
 import CardBack from './CardBack.jsx';
 import { useCardTheme } from '../../context/CardThemeContext.jsx';
 
-export default function PremiumVisitorCard({ visitor, showBack = true, theme: themeProp }) {
-  const { theme: ctxTheme } = useCardTheme();
-  const theme = themeProp || ctxTheme;
+export default function PremiumVisitorCard({ visitor, showBack = true }) {
+  const { theme } = useCardTheme();
 
   const data = {
     name: visitor.name,
@@ -15,15 +14,16 @@ export default function PremiumVisitorCard({ visitor, showBack = true, theme: th
     visitorType: visitor.visitorType,
     checkInTime: visitor.checkInTime,
     passId: visitor.passId,
-    qrCodeValue: visitor.qrCodeValue
+    qrCodeValue: visitor.qrCodeValue,
+    tokenNumber: visitor.tokenNumber
   };
 
   return (
     <div className="premium-card-container premium-visitor-card">
       <div className="premium-card-inner">
-        <CardFront data={data} type="visitor" theme={theme} />
-        {showBack && (theme?.enableBackSidePrint !== false) && (
-          <CardBack data={data} type="visitor" theme={theme} />
+        <CardFront data={data} type="visitor" />
+        {showBack && theme.enableBackSidePrint && (
+          <CardBack data={data} type="visitor" />
         )}
       </div>
     </div>

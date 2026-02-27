@@ -1,24 +1,29 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import CardPreviewModal from './cards/CardPreviewModal.jsx';
-import CardThemePanel from './CardThemePanel.jsx';
+import AddFinePanel from './AddFinePanel.jsx';
+import FinesHistoryPanel from './FinesHistoryPanel.jsx';
+import RegisterStudentsPanel from './RegisterStudentsPanel.jsx';
 import * as XLSX from 'xlsx';
 import { LoaderInline } from './Loader.jsx';
 import { SkeletonTable, SkeletonCards } from './Skeleton.jsx';
 import { useToast } from '../context/ToastContext.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
 import { API_BASE } from '../config.js';
 
-const AdminScreen = () => {
+const AdminScreen = ({ activeTab }) => {
   const { addToast } = useToast();
+  const { user: currentUser, setUser: setAuthUser } = useAuth();
   const [loggedIn, setLoggedIn] = useState(false);
   const [loginForm, setLoginForm] = useState({ username: '', password: '' });
   const [status, setStatus] = useState(null);
-  const [tab, setTab] = useState('visitors');
+  const tab = activeTab || 'visitors';
 
   const [visitors, setVisitors] = useState([]);
   const [visitorFilters, setVisitorFilters] = useState({ from: '', to: '', q: '' });
 
   const [studentLogs, setStudentLogs] = useState([]);
+  const [studentLogFilters, setStudentLogFilters] = useState({ from: '', to: '', studentId: '', department: '' });
 
   const [students, setStudents] = useState([]);
   const [studentForm, setStudentForm] = useState({ name: '', department: '' });
@@ -37,7 +42,9 @@ const AdminScreen = () => {
   const [loadingAddStudent, setLoadingAddStudent] = useState(false);
   const [bulkImportResult, setBulkImportResult] = useState(null);
   const [loadingBulkImport, setLoadingBulkImport] = useState(false);
+  const [departments, setDepartments] = useState([]);
   const fileInputRef = useRef(null);
+  const isAdmin = currentUser?.role !== 'security';
 
   const handleLoginChange = (e) => {
     const { name, value } = e.target;
@@ -57,7 +64,9 @@ const AdminScreen = () => {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Login failed');
+      const userData = { username: data.username, role: data.role || 'admin' };
       setLoggedIn(true);
+      setAuthUser(userData);
       setStatus({ type: 'success', message: 'Logged in as ' + data.username });
       addToast({ message: 'Logged in as ' + data.username, type: 'success', size: 'small' });
     } catch (err) {
@@ -102,7 +111,12 @@ const AdminScreen = () => {
   const loadStudentLogs = async () => {
     setLoadingStudentLogs(true);
     try {
-      const res = await fetch(`${API_BASE}/students/logs/all`, {
+      const params = new URLSearchParams();
+      if (studentLogFilters.from) params.append('from', studentLogFilters.from);
+      if (studentLogFilters.to) params.append('to', studentLogFilters.to);
+      if (studentLogFilters.studentId) params.append('studentId', studentLogFilters.studentId);
+      if (studentLogFilters.department) params.append('department', studentLogFilters.department);
+      const res = await fetch(`${API_BASE}/students/logs/all?${params.toString()}`, {
         credentials: 'include'
       });
       const data = await res.json();
@@ -343,15 +357,36 @@ const AdminScreen = () => {
   };
 
   useEffect(() => {
+    fetch(`${API_BASE}/auth/me`, { credentials: 'include' })
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.user) {
+          setLoggedIn(true);
+          setAuthUser(d.user);
+        }
+      })
+      .catch(() => {});
+  }, [setAuthUser]);
+
+  useEffect(() => {
+    fetch(`${API_BASE}/students/departments`, { credentials: 'include' })
+      .then((r) => r.json())
+      .then((d) => setDepartments(d.departments || []))
+      .catch(() => setDepartments([]));
+  }, []);
+
+  useEffect(() => {
     if (!loggedIn) return;
     if (tab === 'visitors') {
       loadVisitors();
     } else if (tab === 'studentLogs') {
       loadStudentLogs();
     } else if (tab === 'students') {
-      loadStudents();
+      /* RegisterStudentsPanel loads its own data */
     } else if (tab === 'report') {
       loadDailyReport();
+    } else if (tab === 'addFine' || tab === 'finesHistory') {
+      // Fines panels load their own data
     }
   }, [loggedIn, tab]);
 
@@ -420,42 +455,24 @@ const AdminScreen = () => {
     );
   }
 
+  const logout = async () => {
+    try {
+      await fetch(`${API_BASE}/auth/logout`, { method: 'POST', credentials: 'include' });
+      setLoggedIn(false);
+      setAuthUser(null);
+      addToast({ message: 'Logged out', type: 'success', size: 'small' });
+    } catch (e) {}
+  };
+
   return (
     <div className="admin-panel">
-      <div className="page-header">
-        <h2>Admin Dashboard</h2>
-        <span className="page-subtitle">Overview</span>
-      </div>
-      <div className="admin-tabs">
-        <button
-          className={tab === 'visitors' ? 'tab-button active' : 'tab-button'}
-          onClick={() => setTab('visitors')}
-        >
-          Visitor Logs
-        </button>
-        <button
-          className={tab === 'students' ? 'tab-button active' : 'tab-button'}
-          onClick={() => setTab('students')}
-        >
-          Register Students
-        </button>
-        <button
-          className={tab === 'studentLogs' ? 'tab-button active' : 'tab-button'}
-          onClick={() => setTab('studentLogs')}
-        >
-          Student Entry Logs
-        </button>
-        <button
-          className={tab === 'report' ? 'tab-button active' : 'tab-button'}
-          onClick={() => setTab('report')}
-        >
-          Daily Report
-        </button>
-        <button
-          className={tab === 'cardTheme' ? 'tab-button active' : 'tab-button'}
-          onClick={() => setTab('cardTheme')}
-        >
-          Card Theme
+      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
+        <div>
+          <h2>Admin Dashboard</h2>
+          <span className="page-subtitle">Overview {currentUser && `• ${currentUser.username} (${currentUser.role || 'admin'})`}</span>
+        </div>
+        <button type="button" className="btn-secondary" onClick={logout}>
+          Log Out
         </button>
       </div>
 
@@ -514,6 +531,7 @@ const AdminScreen = () => {
           <table className="table-large">
             <thead>
               <tr>
+                <th>Token</th>
                 <th>Name</th>
                 <th>Type</th>
                 <th>CNIC</th>
@@ -528,6 +546,7 @@ const AdminScreen = () => {
             <tbody>
               {visitors.map((v) => (
                 <tr key={v._id}>
+                  <td><span className="token-badge">{v.tokenNumber || '—'}</span></td>
                   <td>{v.name}</td>
                   <td><span className="visitor-type-badge">{v.visitorType || 'Guest'}</span></td>
                   <td>{v.cnic}</td>
@@ -537,9 +556,11 @@ const AdminScreen = () => {
                   <td>{v.checkInTime ? new Date(v.checkInTime).toLocaleString() : ''}</td>
                   <td>{v.checkOutTime ? new Date(v.checkOutTime).toLocaleString() : ''}</td>
                   <td>
-                    <button className="btn-small danger" onClick={() => deleteVisitor(v._id)}>
-                      Delete
-                    </button>
+                    {isAdmin && (
+                      <button className="btn-small danger" onClick={() => deleteVisitor(v._id)}>
+                        Delete
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -551,161 +572,7 @@ const AdminScreen = () => {
       )}
 
       {tab === 'students' && (
-        <div className="admin-section">
-          <div className="panel-header">
-            <div className="panel-icon">👥</div>
-            <h3>Register Students</h3>
-          </div>
-          <p className="section-hint">
-            Add students so they can be recognized when scanning their ID card. Student ID is auto-generated and used for scanning.
-          </p>
-          <div className="bulk-import-section">
-            <h4>Bulk Import</h4>
-            <p className="section-hint" style={{ marginBottom: '0.75rem' }}>
-              Upload a CSV, JSON, or Excel (XLS/XLSX) file. Required: <strong>name</strong>, <strong>department</strong>. Student ID is auto-generated if omitted.
-            </p>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".csv,.json,.xls,.xlsx"
-              onChange={handleBulkUpload}
-              style={{ display: 'none' }}
-            />
-            <button
-              type="button"
-              className="btn-secondary btn-upload"
-              disabled={loadingBulkImport}
-              onClick={() => fileInputRef.current?.click()}
-            >
-              {loadingBulkImport ? 'Importing...' : '📤 Upload File (CSV / JSON / XLS)'}
-            </button>
-            {bulkImportResult && !bulkImportResult.error && (
-              <div className="status success" style={{ marginTop: '0.5rem' }}>
-                Created: {bulkImportResult.created}, Skipped: {bulkImportResult.skipped}
-              </div>
-            )}
-            {bulkImportResult?.error && (
-              <div className="status error" style={{ marginTop: '0.5rem' }}>{bulkImportResult.error}</div>
-            )}
-          </div>
-
-          <form className="form-large student-form" onSubmit={addStudent}>
-            <p className="section-hint" style={{ marginBottom: '1rem' }}>
-              Student ID is auto-generated (e.g. IHS-NUR-001, IHS-PHR-001).
-            </p>
-            <div className="form-row-inline">
-              <div className="form-group">
-                <label>Full Name</label>
-                <input
-                  name="name"
-                  value={studentForm.name}
-                  onChange={handleStudentFormChange}
-                  className="input-large"
-                  placeholder="Student name"
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Department / Program</label>
-                <input
-                  name="department"
-                  value={studentForm.department}
-                  onChange={handleStudentFormChange}
-                  className="input-large"
-                  placeholder="e.g. Nursing, Pharmacy, DPT"
-                  required
-                />
-              </div>
-            </div>
-            <button type="submit" className="btn-primary-wide" disabled={loadingAddStudent}>
-              {loadingAddStudent ? <><LoaderInline /> Adding...</> : 'Add Student'}
-            </button>
-          </form>
-
-          <div className="panel-header" style={{ marginTop: '1.5rem', flexWrap: 'wrap', gap: '0.75rem' }}>
-            <h3 style={{ marginBottom: 0 }}>Registered Students</h3>
-            <div className="search-inline">
-              <input
-                type="text"
-                placeholder="Search by ID, name, or department"
-                value={studentSearch}
-                onChange={(e) => setStudentSearch(e.target.value)}
-                className="input-large"
-                style={{ minWidth: '180px' }}
-              />
-              <button type="button" className="btn-secondary" onClick={loadStudents}>
-                Search
-              </button>
-            </div>
-          </div>
-          {loadingStudents ? (
-            <SkeletonTable rows={5} cols={5} />
-          ) : (
-          <div className="table-wrapper">
-            <table className="table-large">
-              <thead>
-                <tr>
-                  <th>Student ID</th>
-                  <th>Name</th>
-                  <th>Department</th>
-                  <th>QR Code Value</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {students.map((s) => (
-                  <tr key={s._id}>
-                    <td>{s.studentId}</td>
-                    <td>{s.name}</td>
-                    <td>{s.department}</td>
-                    <td>{s.qrCodeValue || '—'}</td>
-                    <td>
-                      <button className="btn-secondary" style={{ marginRight: '0.5rem', padding: '0.35rem 0.6rem', fontSize: '0.8rem' }} onClick={() => showPremiumCard(s)}>
-                        Download / Print Card
-                      </button>
-                      <button className="btn-small danger" onClick={() => deleteStudent(s._id)}>
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          )}
-          {!loadingStudents && students.length === 0 && (
-            <div className="empty-state">No students registered yet. Add one above.</div>
-          )}
-
-          {cardPreviewStudent && (
-            <CardPreviewModal
-              type="student"
-              data={cardPreviewStudent}
-              onClose={() => setCardPreviewStudent(null)}
-              autoPrint={true}
-              playSound={true}
-            />
-          )}
-          {qrPreview && (
-            <div className="qr-modal-overlay" onClick={() => setQrPreview(null)}>
-              <div className="qr-modal" onClick={(e) => e.stopPropagation()}>
-                <div className="qr-modal-header">
-                  <h3>QR Code for {qrPreview.student.name}</h3>
-                  <button type="button" className="qr-close" onClick={() => setQrPreview(null)}>×</button>
-                </div>
-                <p className="qr-hint">Print this and attach to the student card. The scanner reads the encoded value below.</p>
-                <div className="qr-preview-box" ref={qrPrintRef}>
-                  <QRCodeSVG value={qrPreview.value} size={200} level="M" includeMargin />
-                </div>
-                <p className="qr-encoded"><strong>Encoded:</strong> {qrPreview.value}</p>
-                <p className="qr-details">{qrPreview.student.studentId} • {qrPreview.student.department}</p>
-                <button type="button" className="btn-primary-wide" onClick={printQr}>
-                  Print QR Code
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
+        <RegisterStudentsPanel isAdmin={isAdmin} />
       )}
 
       {tab === 'studentLogs' && (
@@ -713,6 +580,48 @@ const AdminScreen = () => {
           <div className="panel-header">
             <div className="panel-icon">📚</div>
             <h3>Student Entry Logs</h3>
+          </div>
+          <div className="filters-row" style={{ marginBottom: '1rem' }}>
+            <div>
+              <label>From</label>
+              <input
+                type="date"
+                value={studentLogFilters.from}
+                onChange={(e) => setStudentLogFilters((f) => ({ ...f, from: e.target.value }))}
+              />
+            </div>
+            <div>
+              <label>To</label>
+              <input
+                type="date"
+                value={studentLogFilters.to}
+                onChange={(e) => setStudentLogFilters((f) => ({ ...f, to: e.target.value }))}
+              />
+            </div>
+            <div>
+              <label>Department</label>
+              <select
+                value={studentLogFilters.department}
+                onChange={(e) => setStudentLogFilters((f) => ({ ...f, department: e.target.value }))}
+              >
+                <option value="">All</option>
+                {departments.map((d) => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label>Student ID</label>
+              <input
+                type="text"
+                value={studentLogFilters.studentId}
+                onChange={(e) => setStudentLogFilters((f) => ({ ...f, studentId: e.target.value }))}
+                placeholder="Filter by ID"
+              />
+            </div>
+            <button className="btn-secondary" onClick={loadStudentLogs}>
+              Apply
+            </button>
           </div>
           {loadingStudentLogs ? (
             <SkeletonTable rows={6} cols={4} />
@@ -732,7 +641,7 @@ const AdminScreen = () => {
                 <tr key={log._id}>
                   <td>{log.student?.studentId}</td>
                   <td>{log.student?.name}</td>
-                  <td>{log.student?.department}</td>
+                  <td><span className="dept-badge">{log.student?.department}</span></td>
                   <td>{log.entryTime ? new Date(log.entryTime).toLocaleString() : ''}</td>
                 </tr>
               ))}
@@ -743,9 +652,8 @@ const AdminScreen = () => {
         </div>
       )}
 
-      {tab === 'cardTheme' && (
-        <CardThemePanel />
-      )}
+      {tab === 'addFine' && <AddFinePanel />}
+      {tab === 'finesHistory' && <FinesHistoryPanel />}
 
       {tab === 'report' && (
         <div className="admin-section">

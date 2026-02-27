@@ -12,6 +12,19 @@ function generateQRCodeValue() {
   return 'QR-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10);
 }
 
+// Daily incremental token: V-001, V-002, ... resets each day
+async function getNextTokenNumber() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  const count = await Visitor.countDocuments({
+    visitDate: { $gte: today, $lt: tomorrow }
+  });
+  return 'V-' + String(count + 1).padStart(3, '0');
+}
+
 // Public: receptionist check-in
 router.post('/check-in', async (req, res) => {
   try {
@@ -29,6 +42,9 @@ router.post('/check-in', async (req, res) => {
 
     const passId = generatePassId();
     const qrCodeValue = generateQRCodeValue();
+    const tokenNumber = await getNextTokenNumber();
+    const visitDate = new Date();
+    visitDate.setHours(0, 0, 0, 0);
 
     const visitor = await Visitor.create({
       name,
@@ -38,7 +54,9 @@ router.post('/check-in', async (req, res) => {
       personToMeet: personToMeet || '',
       visitorType: visitorType || 'Guest',
       passId,
-      qrCodeValue
+      qrCodeValue,
+      tokenNumber,
+      visitDate
     });
 
     return res.status(201).json(visitor);

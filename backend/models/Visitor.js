@@ -14,7 +14,9 @@ const visitorSchema = new mongoose.Schema(
     checkOutTime: { type: Date, default: null },
     passId: { type: String, trim: true },
     qrCodeValue: { type: String, trim: true },
-    cardPrinted: { type: Boolean, default: false }
+    cardPrinted: { type: Boolean, default: false },
+    tokenNumber: { type: String, trim: true },
+    visitDate: { type: Date }
   },
   {
     timestamps: true
