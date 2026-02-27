@@ -11,15 +11,30 @@ export default function CardBack({ data, type = 'visitor' }) {
   const idValue = type === 'visitor' ? (data?.passId || '—') : (data?.studentId || '—');
 
   return (
-    <div className="card-minimal card-back-minimal print-card">
-      <div className="card-back-content">
-        <div className="card-back-name">{data?.name}</div>
-        <div className="card-back-contact">
-          <div>{idLabel}: {idValue}</div>
-          <div>{instituteAddress}</div>
+    <div className="card-premium card-premium-back print-card">
+      <div className="card-premium-bg" />
+      <div className="card-premium-stars" />
+
+      <div className="card-premium-content">
+        <div className="card-premium-header">
+          <div className="card-premium-logo">
+            <span className="card-premium-logo-icon">🔐</span>
+          </div>
+          <div className="card-premium-header-text">
+            <div className="card-premium-institute">{theme?.instituteName || 'Institute of Health Sciences'}</div>
+            <div className="card-premium-type">{type === 'visitor' ? 'Visitor Pass' : 'Student Entry Card'}</div>
+          </div>
         </div>
-        <div className="card-back-qr">
-          <QRCodeSVG value={qrValue} size={90} level="M" />
+
+        <div className="card-back-body">
+          <div className="card-back-qr-wrap">
+            <QRCodeSVG value={qrValue} size={100} level="M" />
+          </div>
+          <div className="card-back-info">
+            <div className="card-back-name">{data?.name}</div>
+            <div className="card-back-id">{idLabel}: {idValue}</div>
+            <div className="card-back-address">{instituteAddress}</div>
+          </div>
         </div>
       </div>
     </div>

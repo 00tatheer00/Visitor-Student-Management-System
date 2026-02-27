@@ -50,7 +50,7 @@ export default function CardPreviewModal({ type, data, onClose, autoPrint = true
             className="btn-primary-wide"
             onClick={() => {
               playPrintSuccessSound();
-              setTimeout(() => window.print(), 200);
+              window.print();
             }}
           >
             🖨️ Print Card
