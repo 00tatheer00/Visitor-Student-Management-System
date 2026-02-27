@@ -1,0 +1,362 @@
+/* Premium ID Card System - Glassmorphism */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+
+/* Card dimensions: 3.5 x 2 inch (business card) */
+:root {
+  --card-width: 336px;
+  --card-height: 192px;
+}
+
+.premium-card-container {
+  font-family: var(--font, 'Inter', sans-serif);
+  color: var(--text, #1e293b);
+}
+
+.premium-card-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card-front,
+.card-back {
+  width: var(--card-width);
+  min-height: var(--card-height);
+  background: var(--gradient, linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%));
+  border-radius: var(--radius, 16px);
+  padding: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+.card-glass {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border-radius: calc(var(--radius, 16px) - 4px);
+  padding: 14px;
+  height: 100%;
+  min-height: 160px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.card-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--primary);
+}
+
+.card-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-logo-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 1.2rem;
+}
+
+.card-institute-name {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--primary);
+  text-align: right;
+  max-width: 60%;
+}
+
+.card-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+}
+
+.card-body {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.card-photo {
+  flex-shrink: 0;
+}
+
+.card-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--gradient);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.card-photo img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.card-name {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.card-id,
+.card-dept {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.card-footer {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid #e2e8f0;
+  font-size: 0.7rem;
+  color: #64748b;
+}
+
+.card-footer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.card-qr-small svg {
+  display: block;
+}
+
+/* Card Back */
+.card-back .card-glass {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.card-back-qr {
+  margin-bottom: 8px;
+}
+
+.card-back-validity {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 6px;
+}
+
+.card-back-address,
+.card-back-emergency {
+  font-size: 0.65rem;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+
+.card-back-rules {
+  font-size: 0.6rem;
+  color: #64748b;
+  margin: 8px 0;
+  padding-left: 16px;
+  text-align: left;
+}
+
+.card-back-signature {
+  font-size: 0.6rem;
+  border-top: 1px solid #94a3b8;
+  margin-top: auto;
+  padding-top: 8px;
+  color: #94a3b8;
+}
+
+/* Card Preview Modal */
+.card-preview-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.card-preview-modal {
+  background: #fff;
+  border-radius: 16px;
+  max-width: 400px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+}
+
+.card-preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.card-preview-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.card-preview-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #64748b;
+  line-height: 1;
+}
+
+.card-preview-content {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card-preview-actions {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+/* Print styles - hide entire page, show only card (modal is portaled to body) */
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+
+  #card-print-root,
+  #card-print-root * {
+    visibility: visible !important;
+  }
+
+  #card-print-root {
+    position: fixed !important;
+    inset: 0 !important;
+    background: #fff !important;
+    padding: 0 !important;
+    z-index: 99999 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .card-preview-modal {
+    box-shadow: none !important;
+    max-width: none !important;
+    background: transparent !important;
+  }
+
+  .no-print,
+  .card-preview-header,
+  .card-preview-actions {
+    display: none !important;
+  }
+
+  .card-preview-content {
+    padding: 0 !important;
+  }
+
+  .premium-card-inner {
+    gap: 20px;
+  }
+
+  /* Ensure gradients and colors print */
+  .card-front,
+  .card-back,
+  .card-glass {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  @page {
+    margin: 0.5in;
+    size: auto;
+  }
+}
+
+/* Card Theme Admin Panel */
+.card-theme-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+.card-theme-form h4 {
+  margin: 1.25rem 0 0.5rem;
+  font-size: 0.95rem;
+  color: #475569;
+}
+
+.card-theme-form h4:first-child {
+  margin-top: 0;
+}
+
+.card-theme-form .form-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.card-theme-form label {
+  min-width: 140px;
+  font-size: 0.9rem;
+}
+
+.card-theme-preview {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid #e2e8f0;
+}
+
+.card-theme-preview h4 {
+  margin: 0 0 1rem;
+  font-size: 0.95rem;
+}
+
+.card-theme-preview-inner {
+  display: flex;
+  justify-content: center;
+  transform-origin: top left;
+}
+
+@media (max-width: 900px) {
+  .card-theme-grid {
+    grid-template-columns: 1fr;
+  }
+}

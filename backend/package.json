@@ -1,0 +1,23 @@
+{
+  "name": "ihs-visitor-management-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Backend API for Institute of Health Sciences – Visitor & Student Entry Management System",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "csv-writer": "^1.6.0",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "mongoose": "^8.7.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  }
+}
+

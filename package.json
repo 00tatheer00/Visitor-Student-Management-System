@@ -1,0 +1,12 @@
+{
+  "name": "ihs-visitor-management",
+  "version": "1.0.0",
+  "description": "Institute of Health Sciences – Visitor & Student Entry Management System",
+  "private": true,
+  "scripts": {
+    "install:all": "cd backend && npm install && cd ../client && npm install",
+    "backend": "cd backend && npm start",
+    "client": "cd client && npm start",
+    "build": "cd client && npm run build"
+  }
+}
